@@ -6,12 +6,8 @@
 set -e
 
 # Default values (can be overridden by environment variables)
-MONGO_HOST=${MONGO_HOST:-"localhost"}
-MONGO_PORT=${MONGO_PORT:-"27017"}
+MONGODB_URI=${MONGODB_URI:-"mongodb://localhost:27017"}
 MONGO_DB=${MONGO_DB:-""}
-MONGO_USER=${MONGO_USER:-""}
-MONGO_PASSWORD=${MONGO_PASSWORD:-""}
-MONGO_AUTH_DB=${MONGO_AUTH_DB:-"admin"}
 BACKUP_DIR=${BACKUP_DIR:-"/backup"}
 LOG_FILE=${LOG_FILE:-"/logs/backup.log"}
 DATE_FORMAT=${DATE_FORMAT:-"%Y%m%d_%H%M%S"}
@@ -36,12 +32,7 @@ create_backup() {
     log "Backup path: $backup_path"
     
     # Build mongodump command
-    local mongodump_cmd="mongodump --host $MONGO_HOST:$MONGO_PORT"
-    
-    # Add authentication if provided
-    if [ -n "$MONGO_USER" ] && [ -n "$MONGO_PASSWORD" ]; then
-        mongodump_cmd="$mongodump_cmd --username $MONGO_USER --password $MONGO_PASSWORD --authenticationDatabase $MONGO_AUTH_DB"
-    fi
+    local mongodump_cmd="mongodump --uri $MONGODB_URI"
     
     # Add specific database if provided
     if [ -n "$MONGO_DB" ]; then
@@ -92,10 +83,8 @@ main() {
     log "Timezone: $(cat /etc/timezone 2>/dev/null || echo 'Not set')"
     log "Current time: $(date)"
     log "Configuration:"
-    log "  Host: $MONGO_HOST:$MONGO_PORT"
+    log "  MongoDB URI: $MONGODB_URI"
     log "  Database: ${MONGO_DB:-'All databases'}"
-    log "  User: ${MONGO_USER:-'No authentication'}"
-    log "  Auth DB: $MONGO_AUTH_DB"
     log "  Backup Directory: $BACKUP_DIR"
     log "  Retention Days: $RETENTION_DAYS"
     
