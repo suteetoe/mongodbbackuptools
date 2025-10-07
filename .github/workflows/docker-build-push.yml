@@ -76,12 +76,16 @@ jobs:
           
           # Run basic tests
           echo "Testing if container starts successfully..."
-          docker run --rm test-image --version || echo "Version check completed"
+          docker run --rm test-image help
           
           # Test if mongodump is available
           echo "Testing if MongoDB tools are installed..."
-          docker run --rm test-image which mongodump
-          docker run --rm test-image which mongorestore
+          docker run --rm test-image bash -c "which mongodump"
+          docker run --rm test-image bash -c "which mongorestore"
+          
+          # Test if entrypoint handles list command
+          echo "Testing list command..."
+          docker run --rm test-image list
           
           echo "All tests passed!"
 
