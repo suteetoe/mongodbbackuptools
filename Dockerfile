@@ -8,15 +8,13 @@ ARG TIMEZONE=Asia/Bangkok
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
-ENV MONGODB_TOOLS_VERSION=100.9.4
+ENV MONGODB_TOOLS_VERSION=100.13.0
 ENV TZ=$TIMEZONE
 
 # Install required packages
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
-    gnupg \
-    lsb-release \
     ca-certificates \
     cron \
     tzdata \
@@ -31,11 +29,11 @@ RUN echo "Timezone set to: $(cat /etc/timezone)" && \
     echo "Timezone verification complete"
 
 # Download and install MongoDB Command Line Database Tools
-RUN wget -qO - https://www.mongodb.org/static/pgp/server-7.0.asc | apt-key add - \
-    && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/debian bookworm/mongodb-org/7.0 main" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list \
-    && apt-get update \
-    && apt-get install -y mongodb-database-tools \
-    && rm -rf /var/lib/apt/lists/*
+RUN wget -O /tmp/mongodb-database-tools.tgz https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian11-x86_64-100.13.0.tgz \
+    && tar -xzf /tmp/mongodb-database-tools.tgz -C /tmp \
+    && cp /tmp/mongodb-database-tools-debian11-x86_64-100.13.0/bin/* /usr/local/bin/ \
+    && rm -rf /tmp/mongodb-database-tools* \
+    && chmod +x /usr/local/bin/mongodump /usr/local/bin/mongorestore /usr/local/bin/mongoexport /usr/local/bin/mongoimport
 
 # Create backup directory and scripts directory
 RUN mkdir -p /backup /scripts /logs
