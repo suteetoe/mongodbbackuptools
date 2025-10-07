@@ -198,6 +198,47 @@ mongodb_backup_YYYYMMDD_HHMMSS.tar.gz
 - Consider encrypting backup files for sensitive data
 - Use strong authentication for MongoDB connections
 
+## CI/CD Pipeline
+
+This repository includes a GitHub Actions workflow that automatically builds and pushes Docker images to GitHub Container Registry (ghcr.io).
+
+### Automated Builds
+
+The workflow triggers on:
+- **Push to main/develop branches**: Builds and pushes with branch tags
+- **Pull requests**: Builds for testing (no push)
+- **Git tags**: Builds and pushes with semantic version tags
+- **Manual dispatch**: Allows manual builds with optional push control
+
+### Image Tags
+
+Images are automatically tagged with:
+- `latest` - Latest build from main branch
+- `main`, `develop` - Branch-specific tags
+- `v1.0.0`, `v1.0`, `v1` - Semantic version tags (for git tags)
+- `main-abc1234-20241007` - Commit-specific tags with date
+
+### Using Pre-built Images
+
+Instead of building locally, you can use pre-built images:
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/suteetoe/mongodbbackuptools:latest
+
+# Use in docker-compose.yml
+services:
+  mongodb-backup:
+    image: ghcr.io/suteetoe/mongodbbackuptools:latest
+    # ... rest of configuration
+```
+
+### Multi-platform Support
+
+Images are built for multiple architectures:
+- `linux/amd64` (Intel/AMD x64)
+- `linux/arm64` (ARM64/Apple Silicon)
+
 ## Troubleshooting
 
 ### Check logs
