@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  mongodb-backup:
+    build: 
+      context: .
+      args:
+        TIMEZONE: Asia/Bangkok
+    image: mongodb-backup:latest
+    container_name: mongodb-backup
+    environment:
+      # Timezone setting
+      - TZ=Asia/Bangkok
+      
+      # MongoDB connection settings
+      - MONGO_HOST=mongodb  # Change to your MongoDB host
+      - MONGO_PORT=27017
+      - MONGO_DB=           # Leave empty to backup all databases
+      - MONGO_USER=         # MongoDB username (if authentication is enabled)
+      - MONGO_PASSWORD=     # MongoDB password (if authentication is enabled)
+      - MONGO_AUTH_DB=admin
+      
+      # Backup settings
+      - BACKUP_DIR=/backup
+      - LOG_FILE=/logs/backup.log
+      - RETENTION_DAYS=7    # Keep backups for 7 days
+      - DATE_FORMAT=%Y%m%d_%H%M%S
+      
+      # Cron settings
+      - CRON_SCHEDULE=5 0 * * *  # Daily at 00:05 (5 minutes past midnight)
+    volumes:
+      - ./backups:/backup   # Local directory to store backups
+      - ./logs:/logs        # Local directory to store logs
+    networks:
+      - mongodb-network
+    # Default mode: scheduled backups with cron
+    # To run different modes, override the command:
+    # command: backup           # One-time backup
+    # command: ["restore", "mongodb_backup_20241007_120000.tar.gz"]  # Restore
+    # command: list             # List available backups
+    
+  # Example MongoDB service (remove if you have your own MongoDB)
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - mongodb-network
+
+networks:
+  mongodb-network:
+    driver: bridge
+
+volumes:
+  mongodb-data:
