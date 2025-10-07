@@ -10,7 +10,7 @@ MONGODB_URI=${MONGODB_URI:-"mongodb://localhost:27017"}
 MONGO_DB=${MONGO_DB:-""}
 BACKUP_DIR=${BACKUP_DIR:-"/backup"}
 LOG_FILE=${LOG_FILE:-"/logs/backup.log"}
-DATE_FORMAT=${DATE_FORMAT:-"%Y%m%d_%H%M%S"}
+DATE_FORMAT=${DATE_FORMAT:-"%A"}
 RETENTION_DAYS=${RETENTION_DAYS:-"7"}
 
 # Create log directory if it doesn't exist
