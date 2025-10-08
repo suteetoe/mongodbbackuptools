@@ -37,10 +37,7 @@ RUN wget -O /tmp/mongodb-database-tools.tgz https://fastdl.mongodb.org/tools/db/
     && chmod +x /usr/local/bin/mongodump /usr/local/bin/mongorestore /usr/local/bin/mongoexport /usr/local/bin/mongoimport
 
 # Create backup directory and scripts directory
-RUN mkdir -p /backup /scripts /logs /cert
-
-# Copy MongoDB CA certificate
-COPY cert/mongodb-ca-certificate.crt /cert/mongodb-ca-certificate.crt
+RUN mkdir -p /backup /scripts /logs
 
 # Create backup script
 COPY backup-script.sh /scripts/backup-script.sh
