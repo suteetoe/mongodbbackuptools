@@ -32,16 +32,18 @@ create_backup() {
     log "Backup path: $backup_path"
     
     # Build mongodump command
-    local mongodump_cmd="mongodump --uri $MONGODB_URI"
+    local mongodump_cmd="mongodump --uri=\"$MONGODB_URI\""
     
     # Add specific database if provided
     if [ -n "$MONGO_DB" ]; then
-        mongodump_cmd="$mongodump_cmd --db $MONGO_DB"
+        mongodump_cmd="$mongodump_cmd --db=\"$MONGO_DB\""
     fi
     
     # Add output directory
-    mongodump_cmd="$mongodump_cmd --out $backup_path"
+    mongodump_cmd="$mongodump_cmd --out=\"$backup_path\""
     
+    log "Mongodump command: $mongodump_cmd"
+
     # Execute backup
     if eval "$mongodump_cmd" 2>&1 | tee -a "$LOG_FILE"; then
         log "Backup completed successfully"
